@@ -16,7 +16,16 @@ listener "tcp" {
   # The purpose of this listener block
   purpose = "api"
 
-  tls_disable = {{ boundary_tls_disable | lower }}
+  # TLS configuration
+{% if boundary_tls_disable == "true" %}{% for controller in groups['controllers'] %}
+  tls_disable   = {{ boundary_tls_disable | lower }}
+{% else %}
+  tls_cert_file = "{{ boundary_tls_cert_file }}"
+  tls_key_file  = "{{ boundary_tls_key_file }}"
+{% endif %}
+{% for tls_option, value in boundary_tls_api_listener_parameters %}
+  {{ tls_option }} = "{{ value }}"
+{% endfor $}
 
   # Enable CORS for the Admin UI
   cors_enabled = {{ boundary_cors_enabled | lower }}
@@ -32,7 +41,17 @@ listener "tcp" {
   # The purpose of this listener
   purpose = "cluster"
 
-  tls_disable = {{ boundary_tls_disable | lower }}
+{% if boundary_tls_disable == "true" %}
+  tls_disable   = {{ boundary_tls_disable | lower }}
+{% else %}
+  tls_cert_file = "{{ boundary_tls_cert_file }}"
+  tls_key_file  = "{{ boundary_tls_key_file }}"
+{% endif %}
+{% for tls_option, value in boundary_tls_cluster_listener_parameters %}
+  {{ tls_option }} = "{{ value }}"
+{% endfor $}
+
+  # Enable CORS for the Admin UI
 }
 
 {% if boundary_kms_type == 'gcpckms' %}

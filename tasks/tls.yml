@@ -13,20 +13,27 @@
 - name: SSL Certificate and Key
   become: true
   copy:
-    remote_src: "{{ boundary_tls_files_remote_src }}"
+    remote_src: "{{ item.remote_src }}"
+    content: "{{ item.content }}"
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ boundary_user }}"
     group: "{{ boundary_group }}"
     mode: "{{ item.mode }}"
+  when: item.dest != "" and (item.src != '' or item.content != '')
   with_items:
-    - src: "{{ boundary_tls_src_files }}/{{ boundary_tls_cert_file }}"
-      dest: "{{ boundary_tls_config_path }}/{{ boundary_tls_cert_file }}"
+    - src: "{{ boundary_tls_src_cert_file | default(null) }}"
+      dest: "{{ boundary_tls_cert_file }}"
+      remote_src: "{{ boundary_tls_src_cert_remote | default('false') }}"
+      content: "{{ boundary_tls_ca_content | default(null) }}"
       mode: "0644"
-    - src: "{{ boundary_tls_src_files }}/{{ boundary_tls_key_file }}"
-      dest: "{{ boundary_tls_config_path }}/{{ boundary_tls_key_file }}"
+    - src: "{{ boundary_tls_src key_file | default(null) }}"
+      dest: "{{ boundary_tls_key_file }}"
+      remote_src: "{{ boundary_tls_src_key_remote | default('false') }}"
+      content: "{{ boundary_tls_key_content | default(null) }}"
       mode: "0600"
     - src: "{{ boundary_tls_src_files }}/{{ boundary_tls_ca_file }}"
       dest: "{{ boundary_tls_config_path }}/{{ boundary_tls_ca_file }}"
+      remote_src: "{{ boundary_tls_src_ca_remote | default('false') }}"
+      content: "{{ boundary_tls_ca_content | default(null) }}"
       mode: "0644"
-  when: boundary_tls_copy_keys | bool

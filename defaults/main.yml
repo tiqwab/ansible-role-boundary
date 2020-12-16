@@ -40,18 +40,38 @@ boundary_checksum_file_url: "{{ boundary_url }}/{{ boundary_version }}/{{ bounda
 # Database
 boundary_psql_dbname: boundary
 
-# Key management
+# TLS Listener management
 boundary_client_addr: '0.0.0.0'
 boundary_tls_disable: true
 boundary_cors_enabled: false
 boundary_disable_mlock: true
+# Keys should be parameter names from https://www.boundaryproject.io/docs/configuration/listener/tcp#tcp-listener-parameters
+boundary_tls_api_listener_parameters:
+boundary_tls_cluster_listener_parameters: {}
 
+# TLS keys and certificates
+boundary_tls_config_path: "{{ boundary_home_directory }}/tls" # used to create directory, or within other values
+boundary_tls_ca_file:     "{{ boundary_tls_config_path }}/ca_cert.pem"
+boundary_tls_cert_file:   "{{ boundary_tls_config_path }}/client_cert.pem"
+boundary_tls_key_file:    "{{ boundary_tls_config_path }}/client_key.pem"
+
+# This has been removed and replaced by a test for each file type
+#boundary_tls_copy_keys: true
+# in either src_(type)_file or (type)_content
+
+# Copy TLS files from local or remote
+boundary_tls_src_path: 'files/tls' # only used within other values below relative to the playbook
+boundary_tls_src_ca_file: "{{ boundary_tls_src_path }}/ca_cert.pem"
+#boundary_tls_src_ca_remote: false  # true to use remote file
+boundary_tls_src_cert_file: "{{ boundary_tls_src_path }}/client_cert.pem"
+#boundary_tls_src_cert_remote: false
+boundary_tls_src_key_file: "{{ boundary_tls_src_path }}/client_key.pem"
+#boundary_tls_src_key_remote: false
+
+# or provided the data from Ansible secret data sources
+#boundary_tls_ca_content: secret_provided_value
+#boundary_tls_cert_content: secret_provided_value
+#boundary_tls_keyt_content: secret_provided_value
+
+# KMS Configuration
 boundary_kms_type: 'gcpckms'
-
-boundary_tls_copy_keys: true
-boundary_tls_files_remote_src: false
-boundary_tls_src_files: 'files/tls'
-boundary_tls_config_path: "{{ boundary_home_directory }}/tls"
-boundary_tls_ca_file: ca_cert.pem
-boundary_tls_cert_file: client_cert.pem
-boundary_tls_key_file: client_key.pem
