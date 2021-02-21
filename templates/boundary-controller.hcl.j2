@@ -24,7 +24,7 @@ listener "tcp" {
   purpose = "api"
 
   # TLS configuration
-{% if boundary_tls_disable == "true" %}
+{% if boundary_tls_disable == True %}
   tls_disable = {{ boundary_tls_disable | lower }}
 {% else %}
   tls_cert_file = "{{ boundary_api_tls_cert_file }}"
