@@ -24,7 +24,7 @@ listener "tcp" {
   purpose = "api"
 
   # TLS configuration
-{% if boundary_tls_disable == True %}
+{% if (boundary_tls_disable | bool) %}
   tls_disable = {{ boundary_tls_disable | lower }}
 {% else %}
   tls_cert_file = "{{ boundary_api_tls_cert_file }}"
@@ -39,7 +39,7 @@ listener "tcp" {
 
   # Enable CORS for the Admin UI
   cors_enabled = {{ boundary_cors_enabled | lower }}
-{% if boundary_cors_enabled %}
+{% if (boundary_cors_enabled | bool) %}
   cors_allowed_origins = ["*"]
 {% endif %}
 }
