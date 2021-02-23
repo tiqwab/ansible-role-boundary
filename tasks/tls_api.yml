@@ -21,7 +21,7 @@
     owner: "{{ boundary_user }}"
     group: "{{ boundary_group }}"
     mode: "{{ item.mode }}"
-  no_log: "{{ True if boundary_api_tls_key_content else False }}"
+  no_log: "{{ True if boundary_api_tls_key_content | default(None) else False }}"
   with_items:
     - dest: "{{ boundary_api_tls_cert_file }}"
       src: "{{ boundary_api_tls_cert_src_file | default(omit) }}"
