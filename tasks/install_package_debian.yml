@@ -13,3 +13,6 @@
   apt:
     name: "boundary={{ boundary_version }}"
     force: yes
+  notify:
+    - 'restart boundary-controller daemon'
+    - 'restart boundary-worker daemon'
