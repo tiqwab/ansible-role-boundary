@@ -27,18 +27,7 @@
       run_once: True
       register: boundary_database_init
       changed_when: boundary_database_init.stdout != 'Database already initialized.'
-      when: not lookup('env', 'MOLECULE_FILE')  # skip when testing for now
-      tags:
-        - install
-
-    - name: migrating database for boundary
-      command: "{{ boundary_command }} database migrate -config {{ boundary_controller_file }}"
-      run_once: True
-      register: boundary_database_migrate
-      changed_when: boundary_database_migrate.stdout != 'Migrations successfully run.'
-      when: not lookup('env', 'MOLECULE_FILE')  # skip when testing for now
-      tags:
-        - update
+      when: check_boundary_command.rc != 0 and not lookup('env', 'MOLECULE_FILE')  # skip when testing for now
 
     - name: starting and enabling boundary-controller
       systemd:

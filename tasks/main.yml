@@ -8,6 +8,12 @@
   set_fact:
     boundary_address: "{{ hostvars[inventory_hostname]['ansible_'+boundary_iface]['ipv4']['address'] }}"
 
+- name: check boundary command
+  ansible.builtin.shell: which boundary
+  changed_when: false  # read-only task
+  failed_when: false
+  register: check_boundary_command
+
 - name: install Boundary with packages
   when: boundary_install_package|bool
   block:
